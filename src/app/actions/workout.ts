@@ -3,39 +3,19 @@
 import { PrismaClient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { Exercise } from "../types/workout";
+import { auth } from "@clerk/nextjs/server";
 
 const prisma = new PrismaClient();
 
-export async function initializeWorkout(date: string) {
-  try {
-    // Generate a unique ID using the date
-    const id = `workout_${date}`;
-
-    const workout = await prisma.workout.upsert({
-      where: {
-        id: id, // Use the unique ID
-      },
-      update: {},
-      create: {
-        id: id,
-        date: new Date(date),
-        dayName: "",
-        exercises: [],
-      },
-    });
-
-    return { success: true, data: workout };
-  } catch (error) {
-    console.error("Error initializing workout:", error);
-    return { success: false, error: "Failed to initialize workout" };
-  }
-}
-
 export async function getWorkout(date: string) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
   try {
     const workout = await prisma.workout.findUnique({
       where: {
-        id: `workout_${date}`, // Use the same ID format
+        id: `workout_${date}`,
+        userId: userId,
       },
     });
 
@@ -47,8 +27,14 @@ export async function getWorkout(date: string) {
 }
 
 export async function getWorkouts() {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
   try {
     const workouts = await prisma.workout.findMany({
+      where: {
+        userId: userId,
+      },
       orderBy: {
         date: "desc",
       },
@@ -67,10 +53,14 @@ export async function saveWorkout(
   weight: string,
   exercises: Exercise[]
 ) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
   try {
     const workout = await prisma.workout.upsert({
       where: {
-        id: `workout_${date}`, // Use the same ID format
+        id: `workout_${date}`,
+        userId: userId,
       },
       update: {
         weight: weight ? parseFloat(weight) : null,
@@ -80,6 +70,7 @@ export async function saveWorkout(
       },
       create: {
         id: `workout_${date}`,
+        userId: userId,
         date: new Date(date),
         dayName,
         weight: weight ? parseFloat(weight) : null,
@@ -96,8 +87,14 @@ export async function saveWorkout(
 }
 
 export async function generateWorkoutCSV() {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
   try {
     const workouts = await prisma.workout.findMany({
+      where: {
+        userId: userId,
+      },
       orderBy: {
         date: "desc",
       },

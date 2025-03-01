@@ -1,8 +1,4 @@
-import {
-  saveWorkout,
-  getWorkout,
-  initializeWorkout,
-} from "@/app/actions/workout";
+import { saveWorkout, getWorkout } from "@/app/actions/workout";
 import WorkoutForm from "./WorkoutForm";
 
 export default async function WorkoutPage({
