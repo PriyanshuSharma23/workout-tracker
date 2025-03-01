@@ -14,9 +14,9 @@ export default function Home() {
     if (!value) return;
     const selectedDate = value as Date;
     setDate(selectedDate);
-    const formattedDate = `${selectedDate.getFullYear()}-${
+    const formattedDate = `${selectedDate.getFullYear()}-${String(
       selectedDate.getMonth() + 1
-    }-${selectedDate.getDate()}`;
+    ).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`;
     router.push(`/workout/${formattedDate}`);
   };
 
@@ -32,6 +32,7 @@ export default function Home() {
           value={date}
           className="rounded-lg border border-gray-700 bg-gray-800 text-white p-4 w-full"
           tileClassName="text-white hover:bg-gray-700"
+          maxDate={new Date()}
           prevLabel={
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -87,7 +88,7 @@ export default function Home() {
 
         <button
           className="w-full border border-gray-700 py-2 px-4 rounded-lg hover:bg-gray-800 transition-colors text-gray-300"
-          onClick={() => {}}
+          onClick={() => router.push("/history")}
         >
           View History
         </button>

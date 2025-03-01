@@ -12,14 +12,18 @@ export default async function WorkoutPage({
 }) {
   const { date } = await params;
 
-  // Get or initialize workout data
+  // Try to get existing workout
   const result = await getWorkout(date);
-  let workoutData = result.data;
 
-  if (!workoutData) {
-    const initResult = await initializeWorkout(date);
-    workoutData = initResult.data;
-  }
+  // If no workout exists, provide empty initial data
+  const emptyWorkout = {
+    dayName: "",
+    weight: null,
+    exercises: [],
+  };
+
+  const workoutData =
+    result.success && result.data ? result.data : emptyWorkout;
 
   return <WorkoutForm initialData={workoutData} date={date} />;
 }

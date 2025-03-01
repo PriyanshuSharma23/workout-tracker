@@ -25,6 +25,21 @@
   background-color: #4b5563 !important;
 }
 
+.react-calendar__tile:disabled {
+  background-color: transparent !important;
+  color: #4b5563 !important;
+  cursor: not-allowed !important;
+}
+
+.react-calendar__tile:disabled:hover {
+  background-color: transparent !important;
+  color: #4b5563 !important;
+}
+
+.react-calendar__month-view__days__day--neighboringMonth:disabled {
+  color: #374151 !important;
+}
+
 .react-calendar__navigation {
   display: flex;
   align-items: center;

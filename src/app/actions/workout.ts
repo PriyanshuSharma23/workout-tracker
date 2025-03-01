@@ -46,6 +46,21 @@ export async function getWorkout(date: string) {
   }
 }
 
+export async function getWorkouts() {
+  try {
+    const workouts = await prisma.workout.findMany({
+      orderBy: {
+        date: "desc",
+      },
+    });
+
+    return { success: true, data: workouts };
+  } catch (error) {
+    console.error("Error fetching workouts:", error);
+    return { success: false, error: "Failed to fetch workouts" };
+  }
+}
+
 export async function saveWorkout(
   date: string,
   dayName: string,

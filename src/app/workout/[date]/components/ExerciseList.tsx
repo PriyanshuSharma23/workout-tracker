@@ -57,7 +57,8 @@ export function ExerciseList({
                 }
                 placeholder="Weight (kg)"
                 className="w-24 border rounded-lg p-2 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-              />
+              />{" "}
+              <span className="flex justify-center items-center">kg</span>
               <input
                 type="number"
                 value={set.reps}
@@ -66,7 +67,8 @@ export function ExerciseList({
                 }
                 placeholder="Reps"
                 className="w-20 border rounded-lg p-2 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-              />
+              />{" "}
+              <span className="flex justify-center items-center">reps</span>
               <span className="self-center text-sm text-gray-400">
                 Set {setIndex + 1}
               </span>
