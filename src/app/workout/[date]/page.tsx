@@ -1,6 +1,9 @@
 import { saveWorkout, getWorkout } from "@/app/actions/workout";
 import WorkoutForm from "./WorkoutForm";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function WorkoutPage({
   params,
 }: {

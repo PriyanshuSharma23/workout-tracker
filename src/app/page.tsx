@@ -6,6 +6,10 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { Value } from "react-calendar/src/shared/types.js";
 
+// Add these export constants
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default function Home() {
   const router = useRouter();
   const [date, setDate] = useState(new Date());
