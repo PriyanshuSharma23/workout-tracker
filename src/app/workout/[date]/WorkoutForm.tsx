@@ -90,7 +90,7 @@ const WorkoutForm = ({ initialData, date }: WorkoutFormProps) => {
 
   return (
     <div className="min-h-screen bg-gray-900">
-      <NavBar formattedDate={formattedDate} />
+      <NavBar formattedDate={formattedDate} date={date} />
 
       <div className="p-4 max-w-md mx-auto">
         <WorkoutDetails

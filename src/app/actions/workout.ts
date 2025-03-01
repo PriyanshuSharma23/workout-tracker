@@ -131,3 +131,57 @@ export async function generateWorkoutCSV() {
     return { success: false, error: "Failed to generate CSV" };
   }
 }
+
+export async function copyWorkoutToToday(fromDate: string) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const today = new Date();
+  const todayKey = `${today.getFullYear()}-${(today.getMonth() + 1)
+    .toString()
+    .padStart(2, "0")}-${today.getDate().toString().padStart(2, "0")}`;
+
+  try {
+    // Get the source workout
+    const sourceWorkout = await prisma.workout.findUnique({
+      where: {
+        id: `workout_${fromDate}`,
+        userId: userId,
+      },
+    });
+
+    if (!sourceWorkout) {
+      return { success: false, error: "Source workout not found" };
+    }
+
+    // Create new workout for today with data from source workout
+    const workout = await prisma.workout.upsert({
+      where: {
+        id: `workout_${todayKey}`,
+        userId: userId,
+      },
+      update: {
+        weight: sourceWorkout.weight,
+        // @ts-ignore
+        exercises: sourceWorkout.exercises,
+        dayName: sourceWorkout.dayName,
+        updatedAt: new Date(),
+      },
+      create: {
+        id: `workout_${todayKey}`,
+        userId: userId,
+        date: new Date(today),
+        dayName: sourceWorkout.dayName,
+        weight: sourceWorkout.weight,
+        // @ts-ignore
+        exercises: sourceWorkout.exercises,
+      },
+    });
+
+    revalidatePath("/workout/[date]");
+    return { success: true, data: workout };
+  } catch (error) {
+    console.error("Error copying workout:", error);
+    return { success: false, error: "Failed to copy workout" };
+  }
+}
