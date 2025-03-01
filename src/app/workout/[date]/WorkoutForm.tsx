@@ -1,8 +1,12 @@
 "use client";
 import { saveWorkout } from "@/app/actions/workout";
 import { Exercise, WorkoutSet } from "@/app/types/workout";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
+import toast from "react-hot-toast";
+import { NavBar } from "./components/NavBar";
+import { WorkoutDetails } from "./components/WorkoutDetails";
+import { ExerciseList } from "./components/ExerciseList";
+import { SaveButton } from "./components/SaveButton";
 
 type WorkoutFormProps = {
   initialData?: {
@@ -14,8 +18,7 @@ type WorkoutFormProps = {
 };
 
 const WorkoutForm = ({ initialData, date }: WorkoutFormProps) => {
-  const router = useRouter();
-
+  const [isLoading, setIsLoading] = useState(false);
   const [dayName, setDayName] = useState(initialData?.dayName || "");
   const [weight, setWeight] = useState(initialData?.weight?.toString() || "");
   const [exercises, setExercises] = useState<Exercise[]>(
@@ -63,152 +66,48 @@ const WorkoutForm = ({ initialData, date }: WorkoutFormProps) => {
   });
 
   const handleSave = async () => {
-    const result = await saveWorkout(date, dayName, weight, exercises);
-    if (result.success) {
-      // Optionally show success message
+    if (!dayName.trim()) {
+      toast.error("Please enter a workout name");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const result = await saveWorkout(date, dayName, weight, exercises);
+      if (result.success) {
+        toast.success("Workout saved successfully!");
+      } else {
+        toast.error(result.error || "Failed to save workout");
+      }
+    } catch (error) {
+      toast.error("An unexpected error occurred");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-900">
-      <nav className="sticky top-0 bg-gray-800 border-b border-gray-700 z-10 shadow-md">
-        <div className="max-w-md mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
-            <button
-              onClick={() => router.push("/")}
-              className="flex items-center text-gray-300 hover:text-blue-400 transition-colors font-medium"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 mr-1"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              Back
-            </button>
-            <div className="text-center flex-1 mx-4">
-              <p className="text-sm text-gray-400 mt-0.5">{formattedDate}</p>
-            </div>
-            <div className="w-20"></div>
-          </div>
-        </div>
-      </nav>
+      <NavBar formattedDate={formattedDate} />
 
       <div className="p-4 max-w-md mx-auto">
-        <div className="space-y-4 mb-6">
-          <div className="flex flex-col">
-            <label
-              htmlFor="dayName"
-              className="text-sm font-medium mb-1 text-gray-300 block"
-            >
-              Workout Name
-            </label>
-            <input
-              type="text"
-              id="dayName"
-              value={dayName}
-              onChange={(e) => setDayName(e.target.value)}
-              placeholder="e.g. Push Day, Upper Body, etc."
-              className="w-full border rounded-lg p-2 bg-gray-800 border-gray-700 text-white placeholder-gray-500"
-            />
-          </div>
+        <WorkoutDetails
+          dayName={dayName}
+          setDayName={setDayName}
+          weight={weight}
+          setWeight={setWeight}
+        />
 
-          <div className="flex flex-col">
-            <label
-              htmlFor="weight"
-              className="text-sm font-medium mb-1 text-gray-300"
-            >
-              Weight (kg)
-            </label>
-            <input
-              type="number"
-              id="weight"
-              value={weight}
-              onChange={(e) => setWeight(e.target.value)}
-              placeholder="Enter your weight"
-              className="w-full border rounded-lg p-2 bg-gray-800 border-gray-700 text-white placeholder-gray-500"
-            />
-          </div>
-        </div>
+        <ExerciseList
+          exercises={exercises}
+          currentExercise={currentExercise}
+          setCurrentExercise={setCurrentExercise}
+          addExercise={addExercise}
+          addSet={addSet}
+          updateSet={updateSet}
+        />
 
-        <div className="space-y-6">
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={currentExercise}
-              onChange={(e) => setCurrentExercise(e.target.value)}
-              placeholder="Enter exercise name"
-              className="flex-1 border rounded-lg p-2 bg-gray-800 border-gray-700 text-white placeholder-gray-500"
-            />
-            <button
-              onClick={addExercise}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Add
-            </button>
-          </div>
-
-          {exercises.map((exercise, exerciseIndex) => (
-            <div
-              key={exerciseIndex}
-              className="border border-gray-700 rounded-lg p-4 space-y-2 bg-gray-800"
-            >
-              <h3 className="font-medium text-white">{exercise.name}</h3>
-
-              {exercise.sets.map((set, setIndex) => (
-                <div key={setIndex} className="flex gap-2">
-                  <input
-                    type="number"
-                    value={set.weight}
-                    onChange={(e) =>
-                      updateSet(
-                        exerciseIndex,
-                        setIndex,
-                        "weight",
-                        e.target.value
-                      )
-                    }
-                    placeholder="Weight (kg)"
-                    className="w-24 border rounded-lg p-2 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-                  />
-                  <input
-                    type="number"
-                    value={set.reps}
-                    onChange={(e) =>
-                      updateSet(exerciseIndex, setIndex, "reps", e.target.value)
-                    }
-                    placeholder="Reps"
-                    className="w-20 border rounded-lg p-2 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-                  />
-                  <span className="self-center text-sm text-gray-400">
-                    Set {setIndex + 1}
-                  </span>
-                </div>
-              ))}
-
-              <button
-                onClick={() => addSet(exerciseIndex)}
-                className="text-blue-400 text-sm hover:text-blue-300 transition-colors"
-              >
-                + Add Set
-              </button>
-            </div>
-          ))}
-        </div>
-        <div className="mt-6">
-          <button
-            onClick={handleSave}
-            className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors"
-          >
-            Save Workout
-          </button>
-        </div>
+        <SaveButton isLoading={isLoading} onClick={handleSave} />
       </div>
     </div>
   );
