@@ -43,6 +43,12 @@ const WorkoutForm = ({ initialData, date }: WorkoutFormProps) => {
     setExercises(newExercises);
   };
 
+  const deleteSet = (exerciseIndex: number, setIndex: number) => {
+    const newExercises = [...exercises];
+    newExercises[exerciseIndex].sets.splice(setIndex, 1);
+    setExercises(newExercises);
+  };
+
   const updateSet = (
     exerciseIndex: number,
     setIndex: number,
@@ -100,10 +106,13 @@ const WorkoutForm = ({ initialData, date }: WorkoutFormProps) => {
           setCurrentExercise={setCurrentExercise}
           addExercise={addExercise}
           addSet={addSet}
+          deleteSet={deleteSet}
           updateSet={updateSet}
         />
 
         <SaveButton isLoading={isLoading} onClick={handleSave} />
+
+        <div className="h-20"></div>
       </div>
     </div>
   );

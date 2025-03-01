@@ -6,6 +6,7 @@ type ExerciseListProps = {
   setCurrentExercise: (value: string) => void;
   addExercise: () => void;
   addSet: (exerciseIndex: number) => void;
+  deleteSet: (exerciseIndex: number, setIndex: number) => void;
   updateSet: (
     exerciseIndex: number,
     setIndex: number,
@@ -20,6 +21,7 @@ export function ExerciseList({
   setCurrentExercise,
   addExercise,
   addSet,
+  deleteSet,
   updateSet,
 }: ExerciseListProps) {
   return (
@@ -57,7 +59,7 @@ export function ExerciseList({
                 }
                 placeholder="Weight (kg)"
                 className="w-24 border rounded-lg p-2 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-              />{" "}
+              />
               <span className="flex justify-center items-center">kg</span>
               <input
                 type="number"
@@ -67,11 +69,18 @@ export function ExerciseList({
                 }
                 placeholder="Reps"
                 className="w-20 border rounded-lg p-2 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-              />{" "}
+              />
               <span className="flex justify-center items-center">reps</span>
               <span className="self-center text-sm text-gray-400">
                 Set {setIndex + 1}
               </span>
+              <button
+                onClick={() => deleteSet(exerciseIndex, setIndex)}
+                className="ml-auto text-red-400 hover:text-red-300 transition-colors"
+                aria-label="Delete set"
+              >
+                ×
+              </button>
             </div>
           ))}
 
