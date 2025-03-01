@@ -9,11 +9,7 @@ import { ExerciseList } from "./components/ExerciseList";
 import { SaveButton } from "./components/SaveButton";
 
 type WorkoutFormProps = {
-  initialData?: {
-    dayName?: string;
-    weight?: number;
-    exercises?: Exercise[];
-  };
+  initialData?: any;
   date: string;
 };
 

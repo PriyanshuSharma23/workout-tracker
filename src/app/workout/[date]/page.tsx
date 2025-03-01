@@ -25,8 +25,13 @@ export default async function WorkoutPage({
   const workoutData =
     result.success && result.data ? result.data : emptyWorkout;
 
+  if (!result.success) {
+    return <div></div>;
+  }
+
+  if (!result.data) {
+    return <div></div>;
+  }
+
   return <WorkoutForm initialData={workoutData} date={date} />;
 }
-
-// export default function WorkoutPage() {
-// }

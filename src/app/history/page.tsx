@@ -4,6 +4,16 @@ import { WorkoutList } from "./components/WorkoutList";
 
 export default async function HistoryPage() {
   const result = await getWorkouts();
+
+  if (!result.success) {
+    console.error("Error fetching workouts:", result.error);
+    return <div>Error fetching workouts</div>;
+  }
+
+  if (!result.data) {
+    return <div>No workouts found</div>;
+  }
+
   const workouts = result.success ? result.data : [];
 
   return (
