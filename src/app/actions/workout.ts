@@ -94,3 +94,43 @@ export async function saveWorkout(
     return { success: false, error: "Failed to save workout" };
   }
 }
+
+export async function generateWorkoutCSV() {
+  try {
+    const workouts = await prisma.workout.findMany({
+      orderBy: {
+        date: "desc",
+      },
+    });
+
+    const csvRows = [
+      ["Date", "Workout Name", "Weight (kg)", "Exercises", "Sets"].join(","),
+      // @ts-ignore
+      ...workouts.map((workout) => {
+        const exerciseDetails = workout.exercises
+          .map(
+            (ex: any) =>
+              `${ex.name} (${ex.sets
+                .map((set: any) => `${set.weight}kg x ${set.reps}`)
+                .join(", ")})`
+          )
+          .join("; ");
+
+        return [
+          new Date(workout.date).toLocaleDateString(),
+          workout.dayName,
+          workout.weight || "",
+          exerciseDetails,
+        ].join(",");
+      }),
+    ];
+
+    return {
+      success: true,
+      data: csvRows.join("\n"),
+    };
+  } catch (error) {
+    console.error("Error generating CSV:", error);
+    return { success: false, error: "Failed to generate CSV" };
+  }
+}
