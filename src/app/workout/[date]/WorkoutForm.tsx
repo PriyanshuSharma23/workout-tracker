@@ -49,6 +49,12 @@ const WorkoutForm = ({ initialData, date }: WorkoutFormProps) => {
     setExercises(newExercises);
   };
 
+  const deleteExercise = (exerciseIndex: number) => {
+    const newExercises = [...exercises];
+    newExercises.splice(exerciseIndex, 1);
+    setExercises(newExercises);
+  };
+
   const updateSet = (
     exerciseIndex: number,
     setIndex: number,
@@ -107,6 +113,7 @@ const WorkoutForm = ({ initialData, date }: WorkoutFormProps) => {
           addExercise={addExercise}
           addSet={addSet}
           deleteSet={deleteSet}
+          deleteExercise={deleteExercise}
           updateSet={updateSet}
         />
 
