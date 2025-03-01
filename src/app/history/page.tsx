@@ -3,7 +3,6 @@ import { NavBar } from "./components/NavBar";
 import { WorkoutList } from "./components/WorkoutList";
 
 export const dynamic = "force-dynamic";
-export const revalidate = 0;
 
 export default async function HistoryPage() {
   const result = await getWorkouts();
