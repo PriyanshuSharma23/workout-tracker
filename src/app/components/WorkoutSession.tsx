@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Exercise, Set, WorkoutSession } from "@/app/types/workout";
+import { Exercise, WorkoutSet, WorkoutSession } from "@/app/types/workout";
 
 export default function WorkoutSessionCard() {
   const [muscleGroup, setMuscleGroup] = useState("");
@@ -38,7 +38,7 @@ export default function WorkoutSessionCard() {
     sessionIndex: number,
     exerciseIndex: number,
     setIndex: number,
-    field: keyof Set,
+    field: keyof WorkoutSet,
     value: string
   ) => {
     const newSessions = [...sessions];

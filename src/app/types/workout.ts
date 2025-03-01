@@ -1,11 +1,11 @@
-export type Set = {
+export type WorkoutSet = {
   weight: string;
   reps: string;
 };
 
 export type Exercise = {
   name: string;
-  sets: Set[];
+  sets: WorkoutSet[];
 };
 
 export type WorkoutData = {
