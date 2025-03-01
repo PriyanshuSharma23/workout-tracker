@@ -2,10 +2,23 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
+import { Value } from "react-calendar/src/shared/types.js";
 
 export default function Home() {
   const router = useRouter();
-  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [date, setDate] = useState(new Date());
+
+  const handleDateChange = (value: Value) => {
+    if (!value) return;
+    const selectedDate = value as Date;
+    setDate(selectedDate);
+    const formattedDate = `${selectedDate.getFullYear()}-${
+      selectedDate.getMonth() + 1
+    }-${selectedDate.getDate()}`;
+    router.push(`/workout/${formattedDate}`);
+  };
 
   return (
     <div className="min-h-screen p-4 max-w-md mx-auto bg-gray-900">
@@ -13,28 +26,61 @@ export default function Home() {
         Workout Tracker
       </h1>
 
-      <div className="space-y-4 mb-6">
-        <div className="flex flex-col">
-          <label
-            htmlFor="date"
-            className="text-sm font-medium mb-1 text-gray-300"
-          >
-            Date
-          </label>
-          <input
-            type="date"
-            id="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="border rounded-lg p-2 bg-gray-800 border-gray-700 text-white"
-          />
-        </div>
+      <div className="mb-6 flex items-center justify-center">
+        <Calendar
+          onChange={handleDateChange}
+          value={date}
+          className="rounded-lg border border-gray-700 bg-gray-800 text-white p-4 w-full"
+          tileClassName="text-white hover:bg-gray-700"
+          prevLabel={
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="w-4 h-4 text-gray-400"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 19.5 8.25 12l7.5-7.5"
+              />
+            </svg>
+          }
+          nextLabel={
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="w-4 h-4 text-gray-400"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="m8.25 4.5 7.5 7.5-7.5 7.5"
+              />
+            </svg>
+          }
+          navigationLabel={({ date }) => (
+            <span className="text-gray-300">
+              {date.toLocaleString("default", {
+                month: "long",
+                year: "numeric",
+              })}
+            </span>
+          )}
+        />
       </div>
 
       <div className="space-y-4">
         <button
           className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
-          onClick={() => router.push(`/workout/${date}`)}
+          onClick={() =>
+            router.push(`/workout/${date.toISOString().split("T")[0]}`)
+          }
         >
           Start New Workout
         </button>
