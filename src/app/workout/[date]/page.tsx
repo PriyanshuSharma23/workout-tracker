@@ -29,9 +29,5 @@ export default async function WorkoutPage({
     return <div></div>;
   }
 
-  if (!result.data) {
-    return <div></div>;
-  }
-
   return <WorkoutForm initialData={workoutData} date={date} />;
 }
