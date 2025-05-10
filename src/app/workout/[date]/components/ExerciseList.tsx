@@ -12,7 +12,7 @@ type ExerciseListProps = {
     exerciseIndex: number,
     setIndex: number,
     field: keyof WorkoutSet,
-    value: string
+    value: string,
   ) => void;
 };
 
@@ -27,7 +27,7 @@ export function ExerciseList({
   updateSet,
 }: ExerciseListProps) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 mt-6">
       <div className="flex gap-2">
         <input
           type="text"

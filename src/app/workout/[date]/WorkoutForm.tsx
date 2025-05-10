@@ -106,6 +106,8 @@ const WorkoutForm = ({ initialData, date }: WorkoutFormProps) => {
           setWeight={setWeight}
         />
 
+        <SaveButton isLoading={isLoading} onClick={handleSave} />
+
         <ExerciseList
           exercises={exercises}
           currentExercise={currentExercise}
@@ -116,8 +118,6 @@ const WorkoutForm = ({ initialData, date }: WorkoutFormProps) => {
           deleteExercise={deleteExercise}
           updateSet={updateSet}
         />
-
-        <SaveButton isLoading={isLoading} onClick={handleSave} />
 
         <div className="h-20"></div>
       </div>

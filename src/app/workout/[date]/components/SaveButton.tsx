@@ -5,7 +5,7 @@ type SaveButtonProps = {
 
 export function SaveButton({ isLoading, onClick }: SaveButtonProps) {
   return (
-    <div className="mt-6">
+    <div className="sticky top-14">
       <button
         onClick={onClick}
         disabled={isLoading}
