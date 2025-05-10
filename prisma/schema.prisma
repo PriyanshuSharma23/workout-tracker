@@ -14,14 +14,14 @@ generator client {
 }
 
 model Workout {
-  id        String   @id @default(cuid())
-  userId    String   // Add this field for Clerk user ID
-  date      DateTime
+  userId    String // Add this field for Clerk user ID
+  date      String
   dayName   String
   weight    Float?
   exercises Json[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([userId]) // Add an index for better query performance
+  @@id([userId, date])
+  @@index([userId])
 }

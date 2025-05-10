@@ -1,13 +1,7 @@
 "use client";
 
+import { Workout } from "@prisma/client";
 import { useRouter } from "next/navigation";
-
-type Workout = {
-  id: string;
-  date: Date;
-  dayName: string;
-  exercises: any[];
-};
 
 type WorkoutListProps = {
   workouts: Workout[];
@@ -16,19 +10,12 @@ type WorkoutListProps = {
 export function WorkoutList({ workouts }: WorkoutListProps) {
   const router = useRouter();
 
-  const dateKey = (date: Date) => {
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
-      2,
-      "0"
-    )}-${String(date.getDate()).padStart(2, "0")}`;
-  };
-
   return (
     <div className="space-y-4">
       {workouts.map((workout) => (
         <button
-          key={workout.id}
-          onClick={() => router.push(`/workout/${dateKey(workout.date)}`)}
+          key={workout.date + "-" + workout.userId}
+          onClick={() => router.push(`/workout/${workout.date}`)}
           className="w-full p-4 bg-gray-800 rounded-lg border border-gray-700 text-left hover:bg-gray-700 transition-colors"
         >
           <div className="flex justify-between items-start mb-2">

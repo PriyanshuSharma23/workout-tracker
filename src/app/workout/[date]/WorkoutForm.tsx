@@ -1,6 +1,6 @@
 "use client";
 import { saveWorkout } from "@/app/actions/workout";
-import { Exercise, WorkoutSet } from "@/app/types/workout";
+import { DayWorkout, Exercise, WorkoutSet } from "@/app/types/workout";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { NavBar } from "./components/NavBar";
@@ -9,7 +9,7 @@ import { ExerciseList } from "./components/ExerciseList";
 import { SaveButton } from "./components/SaveButton";
 
 type WorkoutFormProps = {
-  initialData?: any;
+  initialData?: DayWorkout;
   date: string;
 };
 
@@ -18,7 +18,7 @@ const WorkoutForm = ({ initialData, date }: WorkoutFormProps) => {
   const [dayName, setDayName] = useState(initialData?.dayName || "");
   const [weight, setWeight] = useState(initialData?.weight?.toString() || "");
   const [exercises, setExercises] = useState<Exercise[]>(
-    initialData?.exercises || []
+    initialData?.exercises || [],
   );
   const [currentExercise, setCurrentExercise] = useState("");
 
@@ -59,7 +59,7 @@ const WorkoutForm = ({ initialData, date }: WorkoutFormProps) => {
     exerciseIndex: number,
     setIndex: number,
     field: keyof WorkoutSet,
-    value: string
+    value: string,
   ) => {
     const newExercises = [...exercises];
     newExercises[exerciseIndex].sets[setIndex][field] = value;

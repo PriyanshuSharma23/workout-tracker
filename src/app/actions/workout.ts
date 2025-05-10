@@ -2,22 +2,30 @@
 
 import { PrismaClient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-import { Exercise } from "../types/workout";
+import { DayWorkout, Exercise } from "../types/workout";
 import { auth } from "@clerk/nextjs/server";
 
 const prisma = new PrismaClient();
+
+function normalizeDate(date: Date | string) {
+  const dateObj = new Date(date);
+  const yyyyMmDd = dateObj.toISOString().split("T")[0]; // "yyyy-mm-dd"
+  return yyyyMmDd;
+}
 
 export async function getWorkout(date: string) {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
   try {
-    const workout = await prisma.workout.findUnique({
+    const workout = (await prisma.workout.findUnique({
       where: {
-        id: `workout_${date}`,
-        userId: userId,
+        userId_date: {
+          date: normalizeDate(date),
+          userId: userId,
+        },
       },
-    });
+    })) as DayWorkout | null;
 
     return { success: true, data: workout };
   } catch (error) {
@@ -51,7 +59,7 @@ export async function saveWorkout(
   date: string,
   dayName: string,
   weight: string,
-  exercises: Exercise[]
+  exercises: Exercise[],
 ) {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
@@ -59,7 +67,10 @@ export async function saveWorkout(
   try {
     const workout = await prisma.workout.upsert({
       where: {
-        id: `workout_${date}`,
+        userId_date: {
+          date: normalizeDate(date),
+          userId: userId,
+        },
         userId: userId,
       },
       update: {
@@ -69,9 +80,8 @@ export async function saveWorkout(
         updatedAt: new Date(),
       },
       create: {
-        id: `workout_${date}`,
+        date: normalizeDate(date),
         userId: userId,
-        date: new Date(date),
         dayName,
         weight: weight ? parseFloat(weight) : null,
         exercises: exercises,
@@ -102,14 +112,13 @@ export async function generateWorkoutCSV() {
 
     const csvRows = [
       ["Date", "Workout Name", "Weight (kg)", "Exercises", "Sets"].join(","),
-      // @ts-ignore
       ...workouts.map((workout) => {
-        const exerciseDetails = workout.exercises
+        const exerciseDetails = (workout.exercises as Exercise[])
           .map(
-            (ex: any) =>
+            (ex) =>
               `${ex.name} (${ex.sets
-                .map((set: any) => `${set.weight}kg x ${set.reps}`)
-                .join(", ")})`
+                .map((set) => `${set.weight}kg x ${set.reps}`)
+                .join(", ")})`,
           )
           .join("; ");
 
@@ -137,16 +146,15 @@ export async function copyWorkoutToToday(fromDate: string) {
   if (!userId) throw new Error("Unauthorized");
 
   const today = new Date();
-  const todayKey = `${today.getFullYear()}-${(today.getMonth() + 1)
-    .toString()
-    .padStart(2, "0")}-${today.getDate().toString().padStart(2, "0")}`;
 
   try {
     // Get the source workout
     const sourceWorkout = await prisma.workout.findUnique({
       where: {
-        id: `workout_${fromDate}`,
-        userId: userId,
+        userId_date: {
+          date: normalizeDate(fromDate),
+          userId: userId,
+        },
       },
     });
 
@@ -157,23 +165,24 @@ export async function copyWorkoutToToday(fromDate: string) {
     // Create new workout for today with data from source workout
     const workout = await prisma.workout.upsert({
       where: {
-        id: `workout_${todayKey}`,
-        userId: userId,
+        userId_date: {
+          date: normalizeDate(fromDate),
+          userId: userId,
+        },
       },
       update: {
         weight: sourceWorkout.weight,
-        // @ts-ignore
+        // @ts-expect-error JSONValue Issue
         exercises: sourceWorkout.exercises,
         dayName: sourceWorkout.dayName,
         updatedAt: new Date(),
       },
       create: {
-        id: `workout_${todayKey}`,
         userId: userId,
-        date: new Date(today),
+        date: normalizeDate(today),
         dayName: sourceWorkout.dayName,
         weight: sourceWorkout.weight,
-        // @ts-ignore
+        // @ts-expect-error JSONValue Issue
         exercises: sourceWorkout.exercises,
       },
     });

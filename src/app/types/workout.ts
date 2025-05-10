@@ -17,3 +17,9 @@ export type WorkoutSession = {
   muscleGroup: string;
   exercises: Exercise[];
 };
+
+export type DayWorkout = {
+  dayName: string;
+  weight: number | null;
+  exercises: Exercise[];
+};

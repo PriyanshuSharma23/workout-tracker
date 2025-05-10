@@ -1,5 +1,6 @@
-import { saveWorkout, getWorkout } from "@/app/actions/workout";
+import { getWorkout } from "@/app/actions/workout";
 import WorkoutForm from "./WorkoutForm";
+import { DayWorkout } from "@/app/types/workout";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +15,7 @@ export default async function WorkoutPage({
   const result = await getWorkout(date);
 
   // If no workout exists, provide empty initial data
-  const emptyWorkout = {
+  const emptyWorkout: DayWorkout = {
     dayName: "",
     weight: null,
     exercises: [],
