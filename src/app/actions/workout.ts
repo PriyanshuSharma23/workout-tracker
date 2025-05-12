@@ -166,7 +166,7 @@ export async function copyWorkoutToToday(fromDate: string) {
     const workout = await prisma.workout.upsert({
       where: {
         userId_date: {
-          date: normalizeDate(fromDate),
+          date: normalizeDate(today),
           userId: userId,
         },
       },
