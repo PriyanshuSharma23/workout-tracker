@@ -47,11 +47,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <head>
-          <link rel="apple-touch-icon" href="/icon-192.png" />
-        </head>
+    <html lang="en">
+      <head>
+        <link rel="apple-touch-icon" href="/icon-192.png" />
+      </head>
+      <ClerkProvider>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-gray-900 text-white`}
         >
@@ -61,7 +61,7 @@ export default function RootLayout({
             <BottomBar />
           </ServiceWorkerLoader>
         </body>
-      </html>
-    </ClerkProvider>
+      </ClerkProvider>
+    </html>
   );
 }

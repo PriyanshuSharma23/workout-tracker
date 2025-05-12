@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Exercise, WorkoutSet, WorkoutSession } from "@/app/types/workout";
+import { WorkoutSet, WorkoutSession } from "@/app/types/workout";
 
 export default function WorkoutSessionCard() {
   const [muscleGroup, setMuscleGroup] = useState("");
@@ -39,7 +39,7 @@ export default function WorkoutSessionCard() {
     exerciseIndex: number,
     setIndex: number,
     field: keyof WorkoutSet,
-    value: string
+    value: string,
   ) => {
     const newSessions = [...sessions];
     newSessions[sessionIndex].exercises[exerciseIndex].sets[setIndex][field] =
@@ -100,7 +100,7 @@ export default function WorkoutSessionCard() {
                         exerciseIndex,
                         setIndex,
                         "weight",
-                        e.target.value
+                        e.target.value,
                       )
                     }
                     placeholder="Weight (kg)"
@@ -115,7 +115,7 @@ export default function WorkoutSessionCard() {
                         exerciseIndex,
                         setIndex,
                         "reps",
-                        e.target.value
+                        e.target.value,
                       )
                     }
                     placeholder="Reps"
