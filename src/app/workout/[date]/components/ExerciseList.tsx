@@ -74,7 +74,7 @@ export function ExerciseList({
           {exercise.sets.map((set, setIndex) => (
             <div key={setIndex} className="flex gap-2">
               <input
-                type="number"
+                type="text"
                 value={set.weight}
                 onChange={(e) =>
                   updateSet(exerciseIndex, setIndex, "weight", e.target.value)
@@ -84,7 +84,7 @@ export function ExerciseList({
               />
               <span className="flex justify-center items-center">kg</span>
               <input
-                type="number"
+                type="text"
                 value={set.reps}
                 onChange={(e) =>
                   updateSet(exerciseIndex, setIndex, "reps", e.target.value)
